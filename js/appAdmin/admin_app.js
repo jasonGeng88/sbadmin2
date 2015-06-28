@@ -9,9 +9,18 @@ app.config(['$routeProvider', function($routeProvider){
             controller : 'CategoryCtrl',
             templateUrl : 'category.html',
         })
+        //店长页面
         .when('/station/index',{//店长首页
             controller : 'StationIndexCtrl',
             templateUrl : 'station/index.html',
+        })
+        .when('/station/todayrpt',{
+            controller : 'StationTodayCtrl',
+            templateUrl : 'station/todayrpt.html',
+        })
+        .when('/station/historyrpt',{
+            controller : 'StationHistoryCtrl',
+            templateUrl : 'station/historyrpt.html',
         })
         .when('/station/wbill',{
             controller : 'StationIndexCtrl',

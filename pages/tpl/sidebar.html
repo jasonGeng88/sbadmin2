@@ -1,7 +1,7 @@
 <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav" id="side-menu">
-            <!-- <li class="sidebar-search">
+            <li class="sidebar-search">
                 <div class="input-group custom-search-form">
                     <input type="text" class="form-control" placeholder="Search...">
                     <span class="input-group-btn">
@@ -9,11 +9,12 @@
                         <i class="fa fa-search"></i>
                         </button>
                     </span>
-                </div> -->
+                </div>
                 <!-- /input-group -->
-            <!-- </li> -->
-            <li ng-repeat="list in info.modelLists">
-                <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a>
+            </li>
+            <li ng-repeat="list in mlist.modelLists">
+                <a href="#/station/{{list}}?mlist={{mliststr}}&uname={{uname}}"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a>
+                <!-- <a href="javascript:void(0)" _categoryDetail="{{list}}" ng-click="entrance($event)"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a> -->
             </li>
             
         </ul>

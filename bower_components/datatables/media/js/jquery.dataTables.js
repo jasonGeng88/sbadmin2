@@ -4788,8 +4788,9 @@
 	function _fnSortAttachListener ( settings, attachTo, colIdx, callback )
 	{
 		var col = settings.aoColumns[ colIdx ];
-	
+
 		_fnBindAction( attachTo, {}, function (e) {
+
 			/* If the column is not sortable - don't to anything */
 			if ( col.bSortable === false ) {
 				return;
@@ -4830,7 +4831,7 @@
 		var sort = _fnSortFlatten( settings );
 		var features = settings.oFeatures;
 		var i, ien, colIdx;
-	
+		
 		if ( features.bSort && features.bSortClasses ) {
 			// Remove old sorting classes
 			for ( i=0, ien=oldSort.length ; i<ien ; i++ ) {
@@ -6073,7 +6074,7 @@
 			}
 		}
 
-		this.each(function() {
+		this.each(function() {			
 			// For each initialisation we want to give it a clean initialisation
 			// object that can be bashed around
 			var o = {};

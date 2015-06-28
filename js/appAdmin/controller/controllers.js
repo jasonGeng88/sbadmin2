@@ -57,7 +57,7 @@ app.controller('CategoryCtrl',function($scope,$http,$location) {
           } else if (data.status==1) {
             if (data.info.roleid==41) {
               var infostr=JSON.stringify(data.info);
-              $location.path("/station/index").search({info: infostr,uname:$scope.uname});
+              $location.path("/station/index").search({mlist: infostr,uname:$scope.uname});
             };
           };
         }).
@@ -73,8 +73,50 @@ app.controller('CategoryCtrl',function($scope,$http,$location) {
 });
 //网点index
 app.controller('StationIndexCtrl',function($scope,$http,$location) {
-  $scope.info=JSON.parse($location.search().info);
-  console.log($scope.info);
+  $scope.mlist=JSON.parse($location.search().mlist);
+  $scope.mliststr=$location.search().mlist;
+  console.log($scope.mlist);
   $scope.uname=$location.search().uname;
-
+  $scope.entrance=function(e){
+    var category=e.target.getAttribute('_categoryDetail');
+    console.log(category);
+    $location.path("/station/"+category).search({uname:$scope.uname,mlist:$scope.mliststr});
+  }
 });
+//网点today
+app.controller('StationTodayCtrl',function($scope,$http,$location){
+  $scope.mlist=JSON.parse($location.search().mlist);
+  $scope.mliststr=$location.search().mlist;
+  console.log($scope.mliststr);
+  $scope.uname=$location.search().uname;
+  console.log($scope.mlist.stationId);
+  var data={stationid:$scope.mlist.stationId};
+  $http.post(apiIp+'/GetXiaogeInfo',data).
+    success(function(data, status, headers, config) {
+      console.log(data);
+      if (data.status==0) {
+        $scope.error=data.info;
+      } else if (data.status==1) {
+        $scope.xgsummary=data.info;
+        $scope.ss=JSON.stringify(data.info);
+      };
+    }).
+    error(function(data, status, headers, config) {
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+  $scope.dataTableSort=function(){
+    console.log($scope.xgsummary);
+  }
+});
+//网点history
+app.controller('StationHistoryCtrl',function($scope,$http,$location){
+  $scope.mlist=JSON.parse($location.search().mlist);
+  $scope.mliststr=$location.search().mlist;
+  console.log($scope.mlist);
+  $scope.uname=$location.search().uname;
+});
+
+
+
+
