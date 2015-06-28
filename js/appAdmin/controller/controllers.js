@@ -56,7 +56,8 @@ app.controller('CategoryCtrl',function($scope,$http,$location) {
             $scope.error=data.info;
           } else if (data.status==1) {
             if (data.info.roleid==41) {
-              $location.path("/station/index").search({stationName: data.info.stationName,stationId: data.info.stationId,uname:$scope.uname});
+              var infostr=JSON.stringify(data.info);
+              $location.path("/station/index").search({info: infostr,uname:$scope.uname});
             };
           };
         }).
@@ -72,8 +73,8 @@ app.controller('CategoryCtrl',function($scope,$http,$location) {
 });
 //网点index
 app.controller('StationIndexCtrl',function($scope,$http,$location) {
-  $scope.stationName=$location.search().stationName;
-  $scope.stationId=$location.search().stationId;
+  $scope.info=JSON.parse($location.search().info);
+  console.log($scope.info);
   $scope.uname=$location.search().uname;
 
 });
