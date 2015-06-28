@@ -1,0 +1,18 @@
+<div ng-include src="'tpl/navbar.html'"></div>
+ <!-- Main hero unit for a primary marketing message or call to action -->
+<div class="container">
+  <div class="hero-unit">
+    <h1>欢迎加入泰笛!</h1>
+    <p>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+    <p><a href="#" class="btn btn-primary btn-large">了解更多 &raquo;</a></p>
+  </div>
+  <!-- Example row of columns -->
+  <div class="row">
+    <div class="col-sm-6" ng-repeat="role in roleids">
+      <!-- <span class="glyphicon glyphicon-home" aria-hidden="true"></span> -->
+      <i class="fa fa-home category-type"></i>
+      {{error}}
+      <button class="btn btn-primary entrance" type="button" ng-click="entrance($event)" _entrancepro="{{role.roleid}}">{{role.name}} &raquo;</button>
+    </div>
+  </div>
+</div>

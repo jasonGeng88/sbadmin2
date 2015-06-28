@@ -1,13 +1,17 @@
 var app = angular.module('app', ['ngRoute']);
 app.config(['$routeProvider', function($routeProvider){
     $routeProvider
-        .when('/', {
+        .when('/login', {
             controller : 'LoginCtrl',
             templateUrl : 'login.html',
         })
         .when('/category', {//分类
             controller : 'CategoryCtrl',
-            templateUrl : 'template/tplAdmin/category.html',
+            templateUrl : 'category.html',
+        })
+        .when('/station/index',{//店长首页
+            controller : 'StationIndexCtrl',
+            templateUrl : 'station/index.html',
         })
         .when('/station/wbill',{
             controller : 'StationIndexCtrl',
