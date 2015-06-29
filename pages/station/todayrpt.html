@@ -27,24 +27,22 @@ $(document).ready(function() {
 						<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 							<thead>
 								<tr>
-									<th ng-click="dataTableSort()">姓名</th>
-									<th ng-click="dataTableSort()">收件总数</th>
-									<th ng-click="dataTableSort()">收件总价</th>
-									<th ng-click="dataTableSort()">收件实际价格</th>
-									<th ng-click="dataTableSort()">送件总数</th>
-									<th ng-click="dataTableSort()">送件总价</th>
-									<th ng-click="dataTableSort()">送件实际价格</th>
+									<th>姓名</th>
+									<th>送件总数</th>
+									<th>送件总价</th>
+									<th>送件实际价格</th>
+									<th>详情</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="xg in xgsummary track by $index" class="{{ss}}">
 									<td>{{xg.name}}</td>
-									<td>{{xg.take_comn}}</td>
-									<td>{{xg.tdisprice}}</td>
-									<td>{{xg.trealprice}}</td>
-									<td>{{xg.send_comn}}</td>
-									<td>{{xg.sdisprice}}</td>
-									<td>{{xg.srealprice}}</td>
+									<td>{{xg.send_count}}</td>
+									<td>{{xg.send_dsum}}</td>
+									<td>{{xg.send_sum}}</td>
+									<td>
+										<a href="#/station/detail/{{xg.user_id}}?mlist={{mliststr}}&uname={{uname}}">详情</a>
+									</td>
 								</tr>
 								<!-- <tr class="odd gradeX">
 									<td>Trident</td>

@@ -18,6 +18,10 @@ app.config(['$routeProvider', function($routeProvider){
             controller : 'StationTodayCtrl',
             templateUrl : 'station/todayrpt.html',
         })
+        .when('/station/detail/:userid',{
+            controller : 'StationDetailCtrl',
+            templateUrl : 'station/detail.html',
+        })
         .when('/station/historyrpt',{
             controller : 'StationHistoryCtrl',
             templateUrl : 'station/historyrpt.html',
@@ -31,5 +35,5 @@ app.config(['$routeProvider', function($routeProvider){
             templateUrl : 'login.html'
         });
 }]);
-var apiIp="http://192.168.2.115/webService/index.php/Api";
-// var apiIp="http://192.168.40.252/webService-finance/Api";
+// var apiIp="http://192.168.2.115/webService/index.php/Api";
+var apiIp="http://192.168.40.252/webService-finance/Api";
