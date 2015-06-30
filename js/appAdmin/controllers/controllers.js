@@ -150,12 +150,6 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
   }
   //纸质代金券提交
   $scope.paperSubmit=function(index){
-    console.log($("input[name='orderid']")[index].value);
-    console.log($("input[name='amount']")[index].value);
-    console.log($("input[name='realamount']")[index].value);
-    console.log($("input[name='startvaltime']")[index].value);
-    console.log($("input[name='endvaltime']")[index].value);
-    console.log($routeParams.userid);
     var orderid=$("input[name='orderid']")[index].value;
     var ctime=document.getElementsByName('ctime')[index].innerHTML;
     console.log(ctime);
@@ -198,8 +192,45 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
         $scope.notify='danger';
         $scope.pinfo='操作失败！';
       });
-    
   }
+  //质疑
+  $scope.problemSubmit=function(index){
+    var orderid=$("input[name='orderid']")[index].value;
+    var problemDescribe=$("textarea[name='problemDescribe']")[index].value;
+    var data={
+            'orderid' : orderid,
+            'stationid' : userInfoService.mlist.stationId,
+            'operatorid': $routeParams.userid,
+            'mark' : problemDescribe,
+            'roleid' : userInfoService.mlist.roleid,
+          };
+    console.log(data);
+    $http.post(apiIp+'/InputProblemBill',data).
+      success(function(data){
+        console.log(data);
+        if (data.status==0) {
+          console.log(data.info);
+          $scope.qinfo=data.info;
+          $scope.notify='danger';
+        } else if (data.status==1) {
+          console.log(data.info);
+          $scope.qinfo=data.info;
+          $scope.infosbt='已提交';
+          $scope.notify='success';
+          $timeout(function(){
+            //keydown事件可以模拟
+            e = jQuery.Event("keydown");
+            e.which = 27 //enter key
+            $('.modal').trigger(e);
+          },500);
+        };
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.notify='danger';
+        $scope.qinfo='操作失败！';
+      });
+    }
 });
 //网点history
 app.controller('StationHistoryCtrl',function($scope,$http,$location,userInfoService){
