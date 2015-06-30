@@ -103,9 +103,6 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
       console.log('error');
       $scope.error='操作失败！';
     });
-  $scope.dataTableSort=function(){
-    console.log($scope.xgsummary);
-  }
 });
 //网点小哥明细
 // app.controller('StationDetailCtrl',function($scope,$http,$location,userInfoService){
@@ -113,7 +110,7 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
 //   $scope.mliststr=userInfoService.mliststr;
 //   $scope.uname=userInfoService.uname;
 // });
-app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,$timeout,userInfoService){
   console.log($routeParams);
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
@@ -137,6 +134,72 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
       console.log('error');
       $scope.error='操作失败！';
     });
+  //日历
+  $scope.datetimepicker=function(){
+    $('.form_date').datetimepicker({
+      format:  'yyyy-MM-dd',
+      language:  'fr',
+      weekStart: 1,
+      todayBtn:  1,
+      autoclose: 1,
+      todayHighlight: 1,
+      startView: 2,
+      minView: 2,
+      forceParse: 0
+    });
+  }
+  //纸质代金券提交
+  $scope.paperSubmit=function(index){
+    console.log($("input[name='orderid']")[index].value);
+    console.log($("input[name='amount']")[index].value);
+    console.log($("input[name='realamount']")[index].value);
+    console.log($("input[name='startvaltime']")[index].value);
+    console.log($("input[name='endvaltime']")[index].value);
+    console.log($routeParams.userid);
+    var orderid=$("input[name='orderid']")[index].value;
+    var ctime=document.getElementsByName('ctime')[index].innerHTML;
+    console.log(ctime);
+    var amount=$("input[name='amount']")[index].value;
+    var realamount=$("input[name='realamount']")[index].value;
+    var startvaltime=$("input[name='startvaltime']")[index].value;
+    var endvaltime=$("input[name='endvaltime']")[index].value;
+    var data={
+            'orderid': orderid,
+            'stationid': userInfoService.mlist.stationId,
+            'amount': amount,
+            'realamount': realamount,
+            'starttime': startvaltime,
+            'createtime': ctime,
+            'endtime': endvaltime,
+            'operatorid': $routeParams.userid,
+        };
+    console.log(data);
+    
+    $http.post(apiIp+'/InputPaperCoupon',data).
+      success(function(data){
+        console.log(data);
+        if (data.status==0) {
+          $scope.pinfo=data.info;
+          $scope.notify='danger';
+        } else if (data.status==1) {
+          $scope.pinfo=data.info.info;
+          $scope.notify='success';
+          $scope.pcoupon=data.info.price;
+          $timeout(function(){
+            //keydown事件可以模拟
+            e = jQuery.Event("keydown");
+            e.which = 27 //enter key
+            $('.modal').trigger(e);
+          },500);
+        };
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.notify='danger';
+        $scope.pinfo='操作失败！';
+      });
+    
+  }
 });
 //网点history
 app.controller('StationHistoryCtrl',function($scope,$http,$location,userInfoService){

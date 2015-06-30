@@ -1,8 +1,13 @@
+<!-- bootstrap-datetimepicker -->
+<link href="../bower_components/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
 <!-- Metis Menu Plugin JavaScript -->
 <script src="../bower_components/metisMenu/dist/metisMenu.min.js"></script>
 <!-- DataTables JavaScript -->
 <script src="../bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<!-- bootstrap-datetimepicker -->
+<script type="text/javascript" src="../bower_components/bootstrap-datetimepicker/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="../bower_components/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script>
 $(document).ready(function() {
@@ -39,8 +44,8 @@ $(document).ready(function() {
 									<th>微信支付</th>
 									<th>红包支付</th>
 									<th>代金券</th>
-									<th>纸质代金券</th>
 									<th>收送方式</th>
+									<th>纸质代金券</th>
 									<th>质疑</th>
 									<th>确认</th>
 								</tr>
@@ -52,15 +57,78 @@ $(document).ready(function() {
 									<td>{{o.nickname}}</td>
 									<td>{{o.disprice}}</td>
 									<td>{{o.realprice}}</td>
-									<td>{{o.createdatetime}}</td>
+									<td name="ctime">{{o.createdatetime}}</td>
 									<td>{{o.donedatetime}}</td>
 									<td>{{o.cash}}</td>
 									<td>{{o.alipay}}</td>
 									<td>{{o.wxpay}}</td>
 									<td>{{o.redpacket}}</td>
 									<td>{{o.coupon}}</td>
-									<td>{{o.papercoupon}}<a href="#/statoin/detail">操作</a></td>
 									<td>{{o.carry}}</td>
+									<td>
+										<div ng-if="o.pcoupon!=0">{{o.pcoupon}}</div>
+										<!-- Button trigger modal -->
+										<div ng-if="o.pcoupon==0">
+											<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#paper{{o.showid}}" ng-if="!pcoupon">录入</button>
+											<div ng-if="pcoupon">{{pcoupon}}</div>
+										</div>
+										<!-- Modal -->
+										<div class="modal fade" id="paper{{o.showid}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+														<h4 class="modal-title" id="myModalLabel">纸质代金券录入</h4>
+													</div>
+													<div class="modal-body">
+														<div class="form-group">
+															<input type="hidden" name="orderid" value="{{o.id}}">
+															<label for="disabledSelect">订单号</label>
+															<input class="form-control" id="disabledInput" type="text" placeholder="{{o.showid}}" disabled="">
+														</div>
+														<div class="form-group">
+															<label>代金券起始时间</label>
+															<div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+																<input class="form-control" size="16" type="text" readonly name="startvaltime" ng-click="datetimepicker()">
+																<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+																<span class="input-group-addon" ng-click="datetimepicker()"><span class="glyphicon glyphicon-calendar"></span></span>
+															</div>
+														</div>
+														<div class="form-group">
+															<label>代金券结束时间</label>
+															<div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+																<input class="form-control" size="16" type="text" readonly name="endvaltime" ng-click="datetimepicker()">
+																<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+																<span class="input-group-addon" ng-click="datetimepicker()"><span class="glyphicon glyphicon-calendar"></span></span>
+															</div>
+														</div>
+														<div class="form-group">
+															<label>代金券金额</label>
+															<input class="form-control" placeholder="输入代金券金额" name="amount" type="number">
+														</div>
+														<div class="form-group">
+															<label>代金券抵用金额</label>
+															<input class="form-control" placeholder="输入代金券抵用金额" name="realamount" type="number">
+														</div>
+														
+														<div class="form-group">
+															<label>操作人员</label>
+															<input class="form-control" id="disabledInput" type="text" placeholder="{{uname}}" disabled="" name="operater">
+														</div>
+													</div>
+													<div class="modal-footer">
+														<div class="alert alert-{{notify}}" ng-show="pinfo">{{pinfo}}</div>
+														<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+														<button type="button" class="btn btn-primary" ng-click="paperSubmit($index)">提交</button>
+													</div>
+												</div>
+												<!-- /.modal-content -->
+											</div>
+											<!-- /.modal-dialog -->
+										</div>
+										<!-- /.modal -->
+										
+									</td>
 									<td>
 										<a href="#/statoin/detail">操作</a>
 									</td>
