@@ -242,12 +242,95 @@ app.controller('StationHistoryCtrl',function($scope,$http,$location,userInfoServ
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
+
 });
 //财务index
 app.controller('FinanceIndexCtrl',function($scope,$http,$location,userInfoService){
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
+  console.log(userInfoService.mlist);
+});
+//财务todayrpt
+app.controller('FinanceTodayrptCtrl',function($scope,$http,$location,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+  console.log(userInfoService.mlist);
+  var data={
+          'cityId':userInfoService.mlist.cityId
+      };
+  $http.post(apiIp+'/GetStationInfo',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==0) {
+        console.log(data.info);
+        $scope.error=data.info;
+      } else if (data.status==1) {
+        console.log(data.info);
+        $scope.sinfo=data.info;
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+});
+//财务网点详情
+app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.stationid=$routeParams.stationid;
+  $scope.uname=userInfoService.uname;
+  console.log(userInfoService.mlist);
+  console.log($routeParams.stationid);
+  var data={
+          stationid:$routeParams.stationid,
+      };
+  $http.post(apiIp+'/GetXiaogeInfo',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==0) {
+        console.log(data.info);
+        $scope.error=data.info;
+      } else if (data.status==1) {
+        console.log(data.info);
+        $scope.sdinfo=data.info;
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+});
+//财务网点下小哥详情
+app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+  $scope.stationid=$routeParams.stationid;
+  console.log(userInfoService.mlist);
+  console.log($routeParams.userid);
+  console.log($routeParams.stationid);
+  var data={
+          userId:$routeParams.userid,
+          stationId:$routeParams.stationid,
+      };
+  $http.post(apiIp+'/GetOrderInfo ',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==0) {
+        console.log(data.info);
+        $scope.error=data.info;
+      } else if (data.status==1) {
+        console.log(data.info);
+        $scope.xdinfo=data.info;
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
 });
 
 

@@ -1,0 +1,125 @@
+<!-- bootstrap-datetimepicker -->
+<link href="../bower_components/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+<!-- Metis Menu Plugin JavaScript -->
+<script src="../bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<!-- DataTables JavaScript -->
+<script src="../bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<!-- bootstrap-datetimepicker -->
+<script type="text/javascript" src="../bower_components/bootstrap-datetimepicker/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="../bower_components/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.fr.js" charset="UTF-8"></script>
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script>
+$(document).ready(function() {
+    $('#dataTables-example').DataTable({
+        responsive: true
+    });
+});
+</script>
+<div ng-include src="'tpl/navbar.html'"></div>
+<div ng-include src="'tpl/sidebar.html'"></div>
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{qinfo}}DataTables Advanced Tables
+                </div>
+                {{error}}
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="dataTable_wrapper">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>网点</th>
+                                    <th>人名</th>
+                                    <th>订单总额</th>
+                                    <th>实收总额</th>
+                                    <th>下单日期</th>
+                                    <th>签收日期</th>
+                                    <th>现金支付</th>
+                                    <th>支付宝支付</th>
+                                    <th>微信支付</th>
+                                    <th>红包支付</th>
+                                    <th>代金券</th>
+                                    <th>收送方式</th>
+                                    <th>纸质代金券</th>
+                                    <th>质疑</th>
+                                    <th>确认</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="o in xdinfo track by $index">
+                                    <td>{{o.showid}}</td>
+                                    <td>{{o.stationname}}</td>
+                                    <td>{{o.nickname}}</td>
+                                    <td>{{o.disprice}}</td>
+                                    <td>{{o.realprice}}</td>
+                                    <td name="ctime">{{o.createdatetime}}</td>
+                                    <td>{{o.donedatetime}}</td>
+                                    <td>{{o.cash}}</td>
+                                    <td>{{o.alipay}}</td>
+                                    <td>{{o.wxpay}}</td>
+                                    <td>{{o.redpacket}}</td>
+                                    <td>{{o.coupon}}</td>
+                                    <td>{{o.carry}}</td>
+                                    <td>{{o.pcoupon}}</td>
+                                    <td>
+                                        <div ng-if="infosbt">{{infosbt}}</div>
+                                        <div ng-if="!infosbt">
+                                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirm{{o.showid}}" ng-if="!infosbt">操作</button>
+                                        </div>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="confirm{{o.showid}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title" id="myModalLabel">订单问题询问</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <input type="hidden" name="porderid" value="{{o.id}}">
+                                                            <label for="disabledSelect">订单号</label>
+                                                            <input class="form-control" id="disabledInput" type="text" placeholder="{{o.showid}}" disabled="">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="disabledSelect">详细说明</label>
+                                                            <textarea class="form-control" rows="4" name="problemDescribe"></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>操作人员</label>
+                                                            <input class="form-control" id="disabledInput" type="text" placeholder="{{uname}}" disabled="" name="operater">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <div class="alert alert-{{notify}}" ng-show="qinfo">{{qinfo}}</div>
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                                        <button type="button" class="btn btn-primary" ng-click="problemSubmit($index)">提交</button>
+                                                    </div>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                        <!-- /.modal -->
+                                    </td>
+                                    <td>
+                                        <a href="#/statoin/detail">操作</a>
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>

@@ -28,21 +28,22 @@ $(document).ready(function() {
 							<thead>
 								<tr>
 									<th>网点</th>
-									<th>店长</th>
 									<th>送件总数</th>
 									<th>送件总价</th>
+									<th>送件实际价格</th>
 									<th>送件实收价格</th>
 									<th>详情</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="xg in xgsummary track by $index">
-									<td>{{xg.name}}</td>
-									<td>{{xg.send_count}}</td>
-									<td>{{xg.send_dsum}}</td>
-									<td>{{xg.send_sum}}</td>
+								<tr ng-repeat="s in sinfo track by $index">
+									<td>{{s.station_name}}</td>
+									<td>{{s.all_count}}</td>
+									<td>{{s.all_dsum}}</td>
+									<td>{{s.all_sum}}</td>
+									<td></td>
 									<td>
-										<a href="#/station/detail/{{xg.user_id}}?mlist={{mliststr}}&uname={{uname}}">详情</a>
+										<a href="#/finance/stationdetail/{{s.station_id}}?mlist={{mliststr}}&uname={{uname}}">详情</a>
 									</td>
 								</tr>
 							</tbody>

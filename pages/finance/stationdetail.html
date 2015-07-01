@@ -35,13 +35,13 @@ $(document).ready(function() {
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="xg in xgsummary track by $index" class="{{ss}}">
+								<tr ng-repeat="xg in sdinfo track by $index" class="{{ss}}">
 									<td>{{xg.name}}</td>
 									<td>{{xg.send_count}}</td>
 									<td>{{xg.send_dsum}}</td>
 									<td>{{xg.send_sum}}</td>
 									<td>
-										<a href="#/station/detail/{{xg.user_id}}?mlist={{mliststr}}&uname={{uname}}">详情</a>
+										<a href="#/finance/xgdetail/{{xg.user_id}}?mlist={{mliststr}}&uname={{uname}}&stationid={{stationid}}">详情</a>
 									</td>
 								</tr>
 							</tbody>

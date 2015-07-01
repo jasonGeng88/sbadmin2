@@ -36,13 +36,21 @@ app.config(['$routeProvider', function($routeProvider){
             templateUrl : 'finance/index.html',
         })
         .when('/finance/todayrpt',{
-            controller : 'FinancetodayrptCtrl',
+            controller : 'FinanceTodayrptCtrl',
             templateUrl : 'finance/todayrpt.html',
+        })
+        .when('/finance/stationdetail/:stationid',{
+            controller : 'FStationDetailCtrl',
+            templateUrl : 'finance/stationdetail.html'
+        })
+        .when('/finance/xgdetail/:userid',{
+            controller : 'FXgDetailCtrl',
+            templateUrl : 'finance/xgdetail.html'
         })
         .otherwise({
             controller : 'LoginCtrl',
             templateUrl : 'login.html'
         });
 }]);
-// var apiIp="http://192.168.2.115/webService/index.php/Api";
-var apiIp="http://192.168.40.252/webService-finance/Api";
+var apiIp="http://192.168.2.115/webService/index.php/Api";
+// var apiIp="http://192.168.40.252/webService-finance/Api";
