@@ -115,8 +115,9 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
 //   $scope.mliststr=userInfoService.mliststr;
 //   $scope.uname=userInfoService.uname;
 // });
-app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,$timeout,userInfoService){
+app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,$timeout,userInfoService,expression){
   console.log($routeParams);
+  $scope.add=expression.specialadd;
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
@@ -124,6 +125,7 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
   var data={
           userId:$routeParams.userid,
           stationId:userInfoService.mlist.stationId,
+          roleId:userInfoService.mlist.roleid,
       };
   console.log(data);
   $http.post(apiIp+'/GetOrderInfo',data).
@@ -198,12 +200,34 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
         $scope.pinfo='操作失败！';
       });
   }
-  //质疑
+  //质疑查看
+  $scope.probleminfo=function(id){
+    console.log(id);
+    var data={
+            orderId : id,
+        };
+    $http.post(apiIp+'/GetProblemInfo',data).
+      success(function(data){
+        if (data.status==1) {
+          console.log(data.info);
+          $scope.problemList=data.info;
+          $('#problem'+id).modal('show'); 
+        };
+        console.log(data);
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.error='操作失败！';
+      });
+  }
+  //质疑提交
   $scope.problemSubmit=function(index){
-    var orderid=$("input[name='orderid']")[index].value;
+    var orderid=$("input[name='porderid']")[index].value;
+    var orderdatetime=$("input[name='porderdatetime']")[index].value;
     var problemDescribe=$("textarea[name='problemDescribe']")[index].value;
     var data={
             'orderid' : orderid,
+            'orderdatetime' : orderdatetime,
             'stationid' : userInfoService.mlist.stationId,
             'operatorid': $routeParams.userid,
             'mark' : problemDescribe,
@@ -222,6 +246,7 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
           $scope.qinfo=data.info;
           $scope.infosbt='已提交';
           $scope.notify='success';
+          $scope.addnum=index;
           $timeout(function(){
             //keydown事件可以模拟
             e = jQuery.Event("keydown");
@@ -304,7 +329,8 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams
     });
 });
 //财务网点下小哥详情
-app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,$timeout,userInfoService,expression){
+  $scope.add = expression.specialadd;
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
@@ -315,6 +341,7 @@ app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,user
   var data={
           userId:$routeParams.userid,
           stationId:$routeParams.stationid,
+          roleId:userInfoService.mlist.roleid,
       };
   $http.post(apiIp+'/GetOrderInfo ',data).
     success(function(data){
@@ -331,6 +358,67 @@ app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,user
       console.log('error');
       $scope.error='操作失败！';
     });
+  $scope.probleminfo=function(id){
+    console.log(id);
+    var data={
+            orderId : id,
+        };
+    $http.post(apiIp+'/GetProblemInfo',data).
+      success(function(data){
+        if (data.status==1) {
+          console.log(data.info);
+          $scope.problemList=data.info;
+          $('#problem'+id).modal('show'); 
+        };
+        console.log(data);
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.error='操作失败！';
+      });
+  }
+  //质疑提交
+  $scope.problemSubmit=function(index){
+    var orderid=$("input[name='porderid']")[index].value;
+    var orderdatetime=$("input[name='porderdatetime']")[index].value;
+    var problemDescribe=$("textarea[name='problemDescribe']")[index].value;
+    var data={
+            'orderid' : orderid,
+            'orderdatetime' : orderdatetime,
+            'stationid' : $routeParams.stationid,
+            'operatorid': $routeParams.userid,
+            'mark' : problemDescribe,
+            'roleid' : userInfoService.mlist.roleid,
+          };
+    console.log(data);
+    $http.post(apiIp+'/InputProblemBill',data).
+      success(function(data){
+        console.log(data);
+        if (data.status==0) {
+          console.log(data.info);
+          $scope.qinfo=data.info;
+          $scope.notify='danger';
+        } else if (data.status==1) {
+          console.log(data.info);
+          $scope.qinfo=data.info;
+          $scope.infosbt='已提交';
+          $scope.addnum=index;
+          console.log($scope.addnum);
+          $scope.notify='success';
+          $timeout(function(){
+            //keydown事件可以模拟
+            e = jQuery.Event("keydown");
+            e.which = 27 //enter key
+            $('.modal').trigger(e);
+          },500);
+        };
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.notify='danger';
+        $scope.qinfo='操作失败！';
+      });
+    }
 });
 
 

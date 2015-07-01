@@ -14,3 +14,15 @@ app.factory('userInfoService', ['$location',function($location) {
   	uname : uname
   };
 }]);
+app.factory('expression', function() {
+  var addExpression=function(a,b){
+    if (!a) {a=0};
+    if (typeof b == 'undefined') {b=0}else{b=1};
+    var num=parseInt(a)+parseInt(b);
+    return num;
+  };
+  return {
+    specialadd : addExpression
+  };
+  
+});

@@ -67,12 +67,14 @@ $(document).ready(function() {
                                     <td>{{o.carry}}</td>
                                     <td>{{o.pcoupon}}</td>
                                     <td>
+                                        <button class="btn btn-danger btn-sm" ng-click="probleminfo(o.id)" ng-if="o.problem != 0 && addnum!=$index">{{o.problem}}</button>
+                                        <button class="btn btn-success btn-sm" ng-click="probleminfo(o.id)" ng-if="o.problemself != 0 || addnum==$index">{{add(o.problemself,addnum)}}</button>
                                         <div ng-if="infosbt">{{infosbt}}</div>
                                         <div ng-if="!infosbt">
-                                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirm{{o.showid}}" ng-if="!infosbt">操作</button>
+                                            <!-- <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirm{{o.showid}}" ng-if="!infosbt">{{o.problem}}</button> -->
                                         </div>
                                         <!-- Modal -->
-                                        <div class="modal fade" id="confirm{{o.showid}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="problem{{o.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -82,8 +84,12 @@ $(document).ready(function() {
                                                     <div class="modal-body">
                                                         <div class="form-group">
                                                             <input type="hidden" name="porderid" value="{{o.id}}">
+                                                            <input type="hidden" name="porderdatetime" value="{{o.donedatetime}}">
                                                             <label for="disabledSelect">订单号</label>
                                                             <input class="form-control" id="disabledInput" type="text" placeholder="{{o.showid}}" disabled="">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <p class="text-info" ng-repeat="p in problemList"><span>{{p.nickname}}（{{p.role}}）：</span>{{p.problem_mark}}<span style="float:right">{{p.create_datetime}}</span></p>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="disabledSelect">详细说明</label>
@@ -107,7 +113,7 @@ $(document).ready(function() {
                                         <!-- /.modal -->
                                     </td>
                                     <td>
-                                        <a href="#/statoin/detail">操作</a>
+                                        <button type="button" class="btn btn-primary btn-sm">未确认</button>
                                     </td>
                                 </tr>
                                 
