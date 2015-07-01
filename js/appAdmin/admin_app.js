@@ -30,10 +30,19 @@ app.config(['$routeProvider', function($routeProvider){
             controller : 'StationIndexCtrl',
             templateUrl : 'template/tplAdmin/station/wbill.html',
         })
+        //财务页面
+        .when('/finance/index',{
+            controller : 'FinanceIndexCtrl',
+            templateUrl : 'finance/index.html',
+        })
+        .when('/finance/todayrpt',{
+            controller : 'FinancetodayrptCtrl',
+            templateUrl : 'finance/todayrpt.html',
+        })
         .otherwise({
             controller : 'LoginCtrl',
             templateUrl : 'login.html'
         });
 }]);
-var apiIp="http://192.168.2.115/webService/index.php/Api";
-// var apiIp="http://192.168.40.252/webService-finance/Api";
+// var apiIp="http://192.168.2.115/webService/index.php/Api";
+var apiIp="http://192.168.40.252/webService-finance/Api";

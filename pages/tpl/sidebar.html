@@ -13,7 +13,8 @@
                 <!-- /input-group -->
             </li>
             <li ng-repeat="list in mlist.modelLists">
-                <a href="#/station/{{list}}?mlist={{mliststr}}&uname={{uname}}"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a>
+                <a ng-if="mlist.stationName" href="#/station/{{list}}?mlist={{mliststr}}&uname={{uname}}"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a>
+                <a ng-if="mlist.cityName" href="#/finance/{{list}}?mlist={{mliststr}}&uname={{uname}}"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a>
                 <!-- <a href="javascript:void(0)" _categoryDetail="{{list}}" ng-click="entrance($event)"><i class="fa fa-dashboard fa-fw"></i> {{list}}</a> -->
             </li>
             

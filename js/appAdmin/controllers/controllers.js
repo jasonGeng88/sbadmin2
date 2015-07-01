@@ -55,14 +55,19 @@ app.controller('CategoryCtrl',function($scope,$http,$location) {
           if (data.status==0) {
             $scope.error=data.info;
           } else if (data.status==1) {
+            console.log(data.info);
             if (data.info.roleid==41) {
               var infostr=JSON.stringify(data.info);
               $location.path("/station/index").search({uname:$scope.uname,mlist:infostr});
             };
+            if (data.info.roleid==42) {
+              var infostr=JSON.stringify(data.info);
+              $location.path("/finance/index").search({uname:$scope.uname,mlist:infostr});
+            };
           };
         }).
         error(function(data, status, headers, config) {
-          console.log(data);
+          console.log('error!');
           $scope.error='操作失败！';
         });
     };
@@ -73,7 +78,7 @@ app.controller('CategoryCtrl',function($scope,$http,$location) {
 });
 //网点index
 app.controller('StationIndexCtrl',function($scope,$http,$location,userInfoService) {
-  // console.log(userInfoService);
+  console.log(userInfoService.mlist);
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
@@ -234,6 +239,12 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
 });
 //网点history
 app.controller('StationHistoryCtrl',function($scope,$http,$location,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+});
+//财务index
+app.controller('FinanceIndexCtrl',function($scope,$http,$location,userInfoService){
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
