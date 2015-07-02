@@ -31,15 +31,24 @@ $(document).ready(function() {
 									<th>送件总数</th>
 									<th>送件总价</th>
 									<th>送件实际价格</th>
+									<th>问题订单数</th>
+									<th>店长确认单数</th>
+									<th>财务确认单数</th>
 									<th>详情</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="xg in xgsummary track by $index" class="{{ss}}">
+								<tr ng-repeat="xg in xgsummary track by $index">
 									<td>{{xg.name}}</td>
 									<td>{{xg.send_count}}</td>
 									<td>{{xg.send_dsum}}</td>
 									<td>{{xg.send_sum}}</td>
+									<td>
+										<div ng-if="xg.problem_num==0">{{xg.problem_num}}</div>
+										<div ng-if="xg.problem_num!=0" class="btn-danger btn-sm">{{xg.problem_num}}</div>
+									</td>
+									<td>{{xg.confirm_num_dz}}</td>
+									<td>{{xg.confirm_num_cw}}</td>
 									<td>
 										<a href="#/station/detail/{{xg.user_id}}?mlist={{mliststr}}&uname={{uname}}">详情</a>
 									</td>

@@ -48,6 +48,7 @@ $(document).ready(function() {
 									<th>纸质代金券</th>
 									<th>质疑</th>
 									<th>确认</th>
+									<th>财务确认</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -83,6 +84,7 @@ $(document).ready(function() {
 													<div class="modal-body">
 														<div class="form-group">
 															<input type="hidden" name="orderid" value="{{o.id}}">
+															<input type="hidden" name="orderdatetime" value="{{o.donedatetime}}">
 															<label for="disabledSelect">订单号</label>
 															<input class="form-control" id="disabledInput" type="text" placeholder="{{o.showid}}" disabled="">
 														</div>
@@ -119,7 +121,9 @@ $(document).ready(function() {
 													<div class="modal-footer">
 														<div class="alert alert-{{notify}}" ng-show="pinfo">{{pinfo}}</div>
 														<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-														<button type="button" class="btn btn-primary" ng-click="paperSubmit($index)">提交</button>
+														<span ng-if="!o.confirmself && csuccess!=$index">
+															<button type="button" class="btn btn-primary" ng-click="paperSubmit($index)">提交</button>
+														</span>
 													</div>
 												</div>
 												<!-- /.modal-content -->
@@ -130,11 +134,12 @@ $(document).ready(function() {
 									</td>
 									<td>
 										<button class="btn btn-danger btn-sm" ng-click="probleminfo(o.id)" ng-if="o.problem != 0 && addnum!=$index">{{o.problem}}</button>
-                                        <button class="btn btn-success btn-sm" ng-click="probleminfo(o.id)" ng-if="o.problemself != 0 || addnum==$index">{{add(o.problemself,addnum)}}</button>
+										<button class="btn btn-info btn-sm" ng-click="probleminfo(o.id)" ng-if="o.problem == 0 && o.problemself == 0 && addnum!=$index">{{o.problem}}</button>
+										<button class="btn btn-success btn-sm" ng-click="probleminfo(o.id)" ng-if="o.problemself != 0 || addnum==$index">{{add(o.problemself,addnum)}}</button>
 										<!-- <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#check{{o.showid}}">{{o.problem}}</button> -->
 										<div ng-if="infosbt">{{infosbt}}</div>
 										<!-- <div ng-if="!infosbt">
-											<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirm{{o.showid}}" ng-if="!infosbt">操作</button>
+												<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirm{{o.showid}}" ng-if="!infosbt">操作</button>
 										</div> -->
 										<!-- Modal -->
 										<div class="modal fade" id="problem{{o.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -152,8 +157,8 @@ $(document).ready(function() {
 															<input class="form-control" id="disabledInput" type="text" placeholder="{{o.showid}}" disabled="">
 														</div>
 														<div class="form-group">
-                                                            <p class="text-info" ng-repeat="p in problemList"><span>{{p.nickname}}（{{p.role}}）：</span>{{p.problem_mark}}<span style="float:right">{{p.create_datetime}}</span></p>
-                                                        </div>
+															<p class="text-info" ng-repeat="p in problemList"><span>{{p.nickname}}（{{p.role}}）：</span>{{p.problem_mark}}<span style="float:right">{{p.create_datetime}}</span></p>
+														</div>
 														<div class="form-group">
 															<label for="disabledSelect">详细说明</label>
 															<textarea class="form-control" rows="4" name="problemDescribe"></textarea>
@@ -166,7 +171,9 @@ $(document).ready(function() {
 													<div class="modal-footer">
 														<div class="alert alert-{{notify}}" ng-show="qinfo">{{qinfo}}</div>
 														<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+														<span ng-if="!o.confirmself">
 														<button type="button" class="btn btn-primary" ng-click="problemSubmit($index)">提交</button>
+														</span>
 													</div>
 												</div>
 												<!-- /.modal-content -->
@@ -176,7 +183,52 @@ $(document).ready(function() {
 										<!-- /.modal -->
 									</td>
 									<td>
-										<a href="#/statoin/detail">操作</a>
+										<div ng-if="o.confirmself">
+											已确认
+										</div>
+										<div ng-if="!o.confirmself">
+											<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirm{{o.id}}" ng-if="csuccess!=$index">未确认</button>
+											<div ng-if="csuccess==$index" class="btn-success btn-sm">已确认</div>
+										</div>
+										<!-- Modal -->
+										<div class="modal fade" id="confirm{{o.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+														<h4 class="modal-title" id="myModalLabel">订单确认</h4>
+													</div>
+													<div class="modal-body">
+														<div class="form-group">
+															<input type="hidden" name="corderid" value="{{o.id}}">
+															<input type="hidden" name="corderdatetime" value="{{o.donedatetime}}">
+															<label for="disabledSelect">订单号</label>
+															<input class="form-control" id="disabledInput" type="text" placeholder="{{o.showid}}" disabled="">
+														</div>
+														<div class="form-group">
+															<label for="disabledSelect">备注</label>
+															<textarea class="form-control" rows="4" name="confirmDescribe"></textarea>
+														</div>
+														<div class="form-group">
+															<label>操作人员</label>
+															<input class="form-control" id="disabledInput" type="text" placeholder="{{uname}}" disabled="" name="operater">
+														</div>
+													</div>
+													<div class="modal-footer">
+														<div class="alert alert-{{notify}}" ng-show="cinfo">{{cinfo}}</div>
+														<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+														<button type="button" class="btn btn-primary" ng-click="confirmSubmit($index)">提交</button>
+													</div>
+												</div>
+												<!-- /.modal-content -->
+											</div>
+											<!-- /.modal-dialog -->
+										</div>
+										<!-- /.modal -->
+									</td>
+									<td>
+										<div ng-if="!confirm">未确认</div>
+										<div ng-if="confirm">已确认</div>
 									</td>
 								</tr>
 								

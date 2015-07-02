@@ -94,7 +94,10 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
   console.log($scope.mlist.stationId);
-  var data={stationid:$scope.mlist.stationId};
+  var data={
+          stationid:$scope.mlist.stationId,
+          roleid:userInfoService.mlist.roleid
+      };
   $http.post(apiIp+'/GetXiaogeInfo',data).
     success(function(data, status, headers, config) {
       console.log(data);
@@ -164,12 +167,14 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
     var realamount=$("input[name='realamount']")[index].value;
     var startvaltime=$("input[name='startvaltime']")[index].value;
     var endvaltime=$("input[name='endvaltime']")[index].value;
+    var orderdatetime=$("input[name='orderdatetime']")[index].value;
     var data={
             'orderid': orderid,
             'stationid': userInfoService.mlist.stationId,
             'amount': amount,
             'realamount': realamount,
             'starttime': startvaltime,
+            'orderdatetime': orderdatetime,
             'createtime': ctime,
             'endtime': endvaltime,
             'operatorid': $routeParams.userid,
@@ -261,6 +266,51 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
         $scope.qinfo='操作失败！';
       });
     }
+  //确认提交
+  $scope.confirmSubmit=function(index){
+    console.log(index);
+    var orderid=$("input[name='corderid']")[index].value;
+    var confirmDescribe=$("textarea[name='confirmDescribe']")[index].value;
+    var orderdatetime=$("input[name='corderdatetime']")[index].value;
+
+    var data={
+            orderId : orderid,
+            roleId : userInfoService.mlist.roleid,
+            userId :　$routeParams.userid,
+            stationId : userInfoService.mlist.stationId,
+            mark : confirmDescribe,
+            orderDatetime : orderdatetime,
+        };
+    console.log(data);
+
+    $http.post(apiIp+'/ConfirmSubmit',data).
+      success(function(data){
+        console.log(data);
+        if (data.status==1) {
+          $scope.cerror=data.info;
+          console.log(data.info);
+          $scope.cinfo=data.info;
+          $scope.notify='success';
+          $scope.csuccess=index;
+          $timeout(function(){
+            //keydown事件可以模拟
+            e = jQuery.Event("keydown");
+            e.which = 27 //enter key
+            $('.modal').trigger(e);
+          },500);
+        } else if (data.status==0) {
+          console.log(data.info);
+          $scope.cinfo=data.info;
+          $scope.notify='danger';
+        };
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.cerror=data.info;
+        $scope.cinfo='服务器异常！';
+        $scope.notify='danger';
+      });
+  }
 });
 //网点history
 app.controller('StationHistoryCtrl',function($scope,$http,$location,userInfoService){
@@ -309,8 +359,11 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams
   $scope.uname=userInfoService.uname;
   console.log(userInfoService.mlist);
   console.log($routeParams.stationid);
+  console.log($routeParams);
+  //获取小哥信息
   var data={
           stationid:$routeParams.stationid,
+          roleid:userInfoService.mlist.roleid
       };
   $http.post(apiIp+'/GetXiaogeInfo',data).
     success(function(data){
@@ -327,6 +380,46 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams
       console.log('error');
       $scope.error='操作失败！';
     });
+  //判断是否可以提交入库
+  var data={
+          stationId:$routeParams.stationid,
+      };
+  $http.post(apiIp+'/IsSubmitTable',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==0) {
+        console.log(data.info);
+        $scope.saveTable=false;
+      } else if (data.status==1) {
+        console.log(data.info);
+        $scope.saveTable=true;
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.saveTable=false;
+    });
+  //数据迁移
+  $scope.importTable=function(){
+    var billDescribe=$("textarea[name='billDescribe']")[0].value;
+    var data={
+          stationId:$routeParams.stationid,
+          mark : billDescribe
+      };
+      console.log(data);
+    $http.post(apiIp+'/ImportData',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==0) {
+        console.log(data.info);
+      } else if (data.status==1) {
+        console.log(data.info);
+      };
+    }).
+    error(function(data){
+      console.log('error');
+    });
+  }
 });
 //财务网点下小哥详情
 app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,$timeout,userInfoService,expression){
@@ -419,6 +512,50 @@ app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,$tim
         $scope.qinfo='操作失败！';
       });
     }
+  //确认提交
+  $scope.confirmSubmit=function(index){
+    console.log(index);
+    var orderid=$("input[name='corderid']")[index].value;
+    var confirmDescribe=$("textarea[name='confirmDescribe']")[index].value;
+    var orderdatetime=$("input[name='corderdatetime']")[index].value;
+
+    var data={
+            orderId : orderid,
+            roleId : userInfoService.mlist.roleid,
+            stationId : $routeParams.stationid,
+            mark : confirmDescribe,
+            orderDatetime : orderdatetime,
+        };
+    console.log(data);
+
+    $http.post(apiIp+'/ConfirmSubmit',data).
+      success(function(data){
+        console.log(data);
+        if (data.status==1) {
+          $scope.cerror=data.info;
+          console.log(data.info);
+          $scope.cinfo=data.info;
+          $scope.notify='success';
+          $scope.csuccess=index;
+          $timeout(function(){
+            //keydown事件可以模拟
+            e = jQuery.Event("keydown");
+            e.which = 27 ;//enter key
+            $('.modal').trigger(e);
+          },500);
+        } else if (data.status==0) {
+          console.log(data.info);
+          $scope.cinfo=data.info;
+          $scope.notify='danger';
+        };
+      }).
+      error(function(data){
+        console.log('error');
+        $scope.cerror=data.info;
+        $scope.cinfo='服务器异常！';
+        $scope.notify='danger';
+      });
+  }
 });
 
 
