@@ -24,7 +24,7 @@ $(document).ready(function() {
 				<!-- /.panel-heading -->
 				<div class="panel-body">
 					<div class="dataTable_wrapper">
-						<table class="table table-striped table-bordered table-hover" id="dataTables-example">
+						<table class="table table-striped table-bordered table-hover">
 							<thead>
 								<tr>
 									<th>网点</th>
@@ -34,6 +34,7 @@ $(document).ready(function() {
 									<th>问题订单数</th>
 									<th>店长确认单数</th>
 									<th>财务确认单数</th>
+									<th>对账单</th>
 									<th>详情</th>
 								</tr>
 							</thead>
@@ -49,6 +50,10 @@ $(document).ready(function() {
 									</td>
 									<td>{{s.confirm_num_dz}}</td>
 									<td>{{s.confirm_num_cw}}</td>
+									<td>
+										<div ng-if="s.isbill=='未确认'">{{s.isbill}}</div>
+										<div ng-if="s.isbill=='已确认'" class="btn-success btn-sm">{{s.isbill}}</div>
+									</td>
 									<td>
 										<a href="#/finance/stationdetail/{{s.station_id}}?mlist={{mliststr}}&uname={{uname}}">详情</a>
 									</td>

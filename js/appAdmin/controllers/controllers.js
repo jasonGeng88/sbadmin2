@@ -27,11 +27,19 @@ app.controller('LoginCtrl',function($scope,$http,$location) {
         $scope.error=data.info;
       } else if (data.status==1) {
         $scope.name=data.info.name;
+        $scope.mlist=data.info.res;
+        console.log(data.info.nums);
         console.log(data.info.res);
+        console.log(data.info.res.roleid);
         console.log(data.info.name);
         var infostr=JSON.stringify(data.info.res);
+        if (data.info.res.roleid==41) {//网点
+          $location.path("/station/index").search({uname:$scope.name,mlist:infostr,nums:JSON.stringify(data.info.nums)});
+        }else if (data.info.res.roleid==42) {
+          $location.path("/finance/index").search({uname:$scope.name,mlist:infostr,nums:JSON.stringify(data.info.nums)});
+        };
         // $location.path("/category").search({info: [111,222],name: 333});
-        $location.path("/category").search({info: infostr,name: data.info.name});
+        // $location.path("/category").search({info: infostr,name: data.info.name});
       };
       
     }).
@@ -41,43 +49,45 @@ app.controller('LoginCtrl',function($scope,$http,$location) {
   };
 });
 //目录
-app.controller('CategoryCtrl',function($scope,$http,$location) {
-  console.log($location.search().name);
-  $scope.roleids=JSON.parse($location.search().info);
-  $scope.uname=$location.search().name;
-  $scope.entrance=function(e){
-    var roleid=e.target.getAttribute('_entrancepro');
-    console.log(roleid);
-    if (roleid==45) {
-      $http.post(apiIp+'/GetFinance').
-        success(function(data, status, headers, config) {
-          console.log(data);
-          if (data.status==0) {
-            $scope.error=data.info;
-          } else if (data.status==1) {
-            console.log(data.info);
-            if (data.info.roleid==41) {
-              var infostr=JSON.stringify(data.info);
-              $location.path("/station/index").search({uname:$scope.uname,mlist:infostr});
-            };
-            if (data.info.roleid==42) {
-              var infostr=JSON.stringify(data.info);
-              $location.path("/finance/index").search({uname:$scope.uname,mlist:infostr});
-            };
-          };
-        }).
-        error(function(data, status, headers, config) {
-          console.log('error!');
-          $scope.error='操作失败！';
-        });
-    };
-    // var entraPro=clickEvent.getAttribute('_entrancepro');
-    // var entraPro=$(this).attr('_entrancepro');
-    // alert(entraPro);
-  }
-});
+// app.controller('CategoryCtrl',function($scope,$http,$location) {
+//   console.log($location.search().name);
+//   $scope.roleids=JSON.parse($location.search().info);
+//   $scope.uname=$location.search().name;
+//   $scope.entrance=function(e){
+//     var roleid=e.target.getAttribute('_entrancepro');
+//     console.log(roleid);
+//     if (roleid==45) {
+//       $http.post(apiIp+'/GetFinance').
+//         success(function(data, status, headers, config) {
+//           console.log(data);
+//           if (data.status==0) {
+//             $scope.error=data.info;
+//           } else if (data.status==1) {
+//             console.log(data.info);
+//             if (data.info.roleid==41) {
+//               var infostr=JSON.stringify(data.info);
+//               $location.path("/station/index").search({uname:$scope.uname,mlist:infostr});
+//             };
+//             if (data.info.roleid==42) {
+//               var infostr=JSON.stringify(data.info);
+//               $location.path("/finance/index").search({uname:$scope.uname,mlist:infostr});
+//             };
+//           };
+//         }).
+//         error(function(data, status, headers, config) {
+//           console.log('error!');
+//           $scope.error='操作失败！';
+//         });
+//     };
+//     // var entraPro=clickEvent.getAttribute('_entrancepro');
+//     // var entraPro=$(this).attr('_entrancepro');
+//     // alert(entraPro);
+//   }
+// });
 //网点index
 app.controller('StationIndexCtrl',function($scope,$http,$location,userInfoService) {
+  $scope.nums=JSON.parse($location.search().nums);
+  console.log($location.search().nums);
   console.log(userInfoService.mlist);
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
@@ -104,7 +114,8 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
       if (data.status==0) {
         $scope.error=data.info;
       } else if (data.status==1) {
-        $scope.xgsummary=data.info;
+        $scope.xgsummary=data.info.res;
+        $scope.billres=data.info.billres;
       };
     }).
     error(function(data, status, headers, config) {
@@ -315,12 +326,54 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
 //网点history
 app.controller('StationHistoryCtrl',function($scope,$http,$location,userInfoService){
   $scope.mlist=userInfoService.mlist;
+  console.log($scope.mlist);
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
-
+  var data = {
+            stationId : $scope.mlist.stationId,
+      };
+  console.log(data);
+  $http.post(apiIp+'/SearchBillOfStation',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==1) {
+        $scope.bill=data.info;
+      } else if (data.status==0) {
+        $scope.error='操作失败！';
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+});
+//网点对账单详情
+app.controller('StationHistoryDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+  console.log(userInfoService.mlist);
+  console.log($routeParams.billid);
+  var data = {
+          billId : $routeParams.billid
+      };
+  $http.post(apiIp+'/CheckBillDetail',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==1) {
+        $scope.billdetail=data.info;
+      }else if (data.status==0) {
+        $scope.error='操作失败！';
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
 });
 //财务index
 app.controller('FinanceIndexCtrl',function($scope,$http,$location,userInfoService){
+  $scope.nums=JSON.parse($location.search().nums);
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
@@ -352,7 +405,7 @@ app.controller('FinanceTodayrptCtrl',function($scope,$http,$location,userInfoSer
     });
 });
 //财务网点详情
-app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+app.controller('FStationDetailCtrl',function($scope,$http,$location,$timeout,$routeParams,userInfoService){
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.stationid=$routeParams.stationid;
@@ -373,7 +426,7 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams
         $scope.error=data.info;
       } else if (data.status==1) {
         console.log(data.info);
-        $scope.sdinfo=data.info;
+        $scope.sdinfo=data.info.res;
       };
     }).
     error(function(data){
@@ -392,7 +445,12 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams
         $scope.saveTable=false;
       } else if (data.status==1) {
         console.log(data.info);
-        $scope.saveTable=true;
+        if (data.info==1) {
+          $scope.saveTable=true;
+        } else if (data.info==2) {
+          $scope.saveTable=false;
+          $scope.submitted=true;
+        };
       };
     }).
     error(function(data){
@@ -412,8 +470,18 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$routeParams
       console.log(data);
       if (data.status==0) {
         console.log(data.info);
+        $scope.importinfo=data.info;
+        $scope.importnotify='danger';
       } else if (data.status==1) {
         console.log(data.info);
+        $scope.importinfo=data.info;
+        $scope.importnotify='success';
+        $timeout(function(){
+            //keydown事件可以模拟
+            e = jQuery.Event("keydown");
+            e.which = 27 //enter key
+            $('.modal').trigger(e);
+          },500);
       };
     }).
     error(function(data){
@@ -557,6 +625,80 @@ app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,$tim
       });
   }
 });
+//财务对账单
+app.controller('FinanceHistoryCtrl',function($scope,$http,$location,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  console.log($scope.mlist);
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+  var data = {
+            cityId : $scope.mlist.cityId,
+      };
+  console.log(data);
+  $http.post(apiIp+'/GetBillStation',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==1) {
+        $scope.station=data.info;
+      } else if (data.status==0) {
+        $scope.error='操作失败！';
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+});
+//财务对账单-网点
+app.controller('FinanceHistoryStationCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  console.log($scope.mlist);
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+  var data = {
+            stationId : $routeParams.stationid,
+      };
+  console.log(data);
+  $http.post(apiIp+'/SearchBillOfStation',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==1) {
+        $scope.bill=data.info;
+      } else if (data.status==0) {
+        $scope.error='操作失败！';
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+});
+//财务对账单详情
+app.controller('FinanceHistoryDetailCtrl',function($scope,$http,$location,$routeParams,userInfoService){
+  $scope.mlist=userInfoService.mlist;
+  $scope.mliststr=userInfoService.mliststr;
+  $scope.uname=userInfoService.uname;
+  console.log(userInfoService.mlist);
+  console.log($routeParams.billid);
+  var data = {
+          billId : $routeParams.billid
+      };
+  console.log(data);
+  $http.post(apiIp+'/CheckBillDetail',data).
+    success(function(data){
+      console.log(data);
+      if (data.status==1) {
+        $scope.billdetail=data.info;
+      }else if (data.status==0) {
+        $scope.error='操作失败！';
+      };
+    }).
+    error(function(data){
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+});
+
 
 
 

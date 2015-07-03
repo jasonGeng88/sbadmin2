@@ -26,6 +26,10 @@ app.config(['$routeProvider', function($routeProvider){
             controller : 'StationHistoryCtrl',
             templateUrl : 'station/historyrpt.html',
         })
+        .when('/station/historydetail/:billid',{
+            controller : 'StationHistoryDetailCtrl',
+            templateUrl : 'station/historydetail.html',
+        })
         .when('/station/wbill',{
             controller : 'StationIndexCtrl',
             templateUrl : 'template/tplAdmin/station/wbill.html',
@@ -46,6 +50,18 @@ app.config(['$routeProvider', function($routeProvider){
         .when('/finance/xgdetail/:userid',{
             controller : 'FXgDetailCtrl',
             templateUrl : 'finance/xgdetail.html'
+        })
+        .when('/finance/historyrpt',{
+            controller : 'FinanceHistoryCtrl',
+            templateUrl : 'finance/historyrpt.html',
+        })
+        .when('/finance/historystation/:stationid',{
+            controller : 'FinanceHistoryStationCtrl',
+            templateUrl : 'finance/historystation.html',
+        })
+        .when('/finance/historydetail/:billid',{
+            controller : 'FinanceHistoryDetailCtrl',
+            templateUrl : 'finance/historydetail.html',
         })
         .otherwise({
             controller : 'LoginCtrl',
