@@ -34,9 +34,9 @@ app.controller('LoginCtrl',function($scope,$http,$location) {
         console.log(data.info.name);
         var infostr=JSON.stringify(data.info.res);
         if (data.info.res.roleid==41) {//网点
-          $location.path("/station/index").search({uname:$scope.name,mlist:infostr,nums:JSON.stringify(data.info.nums)});
+          $location.path("/station/index").search({uname:$scope.name,mlist:infostr});
         }else if (data.info.res.roleid==42) {
-          $location.path("/finance/index").search({uname:$scope.name,mlist:infostr,nums:JSON.stringify(data.info.nums)});
+          $location.path("/finance/index").search({uname:$scope.name,mlist:infostr});
         };
         // $location.path("/category").search({info: [111,222],name: 333});
         // $location.path("/category").search({info: infostr,name: data.info.name});
@@ -86,12 +86,30 @@ app.controller('LoginCtrl',function($scope,$http,$location) {
 // });
 //网点index
 app.controller('StationIndexCtrl',function($scope,$http,$location,userInfoService) {
-  $scope.nums=JSON.parse($location.search().nums);
+  // $scope.nums=JSON.parse($location.search().nums);
   console.log($location.search().nums);
   console.log(userInfoService.mlist);
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
+
+  var data={
+          roleid : userInfoService.mlist.roleid,
+          areaid : userInfoService.mlist.stationId
+      };
+  $http.post(apiIp+'/GetNums',data).
+  success(function(data){
+    console.log(data);
+    if (data.status==0) {
+      $scope.error=data.info;
+    } else if (data.status==1) {
+      $scope.nums=data.info;
+    };
+  }).
+  error(function(data){
+    console.log('error');
+    $scope.error="操作失败！";
+  });
   $scope.entrance=function(e){
     var category=e.target.getAttribute('_categoryDetail');
     console.log(category);
@@ -104,9 +122,21 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
   console.log($scope.mlist.stationId);
+  var time = Date.parse(new Date().toLocaleDateString()); 
+  var time = time-24*60*60*1000;
+  var date = new Date(time); 
+  var datetime = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+  if (document.getElementsByName('dealtime')[0].value=='' || document.getElementsByName('dealtime')[0].value==null) {
+    $scope.dealtime=datetime;
+  } else {
+    $scope.dealtime=document.getElementsByName('dealtime')[0].value;
+  }
+  // $scope.dealtime=document.getElementsByName('dealtime')[0].value;
+  console.log($scope.dealtime);
   var data={
           stationid:$scope.mlist.stationId,
-          roleid:userInfoService.mlist.roleid
+          roleid:userInfoService.mlist.roleid,
+          time:$scope.dealtime
       };
   $http.post(apiIp+'/GetXiaogeInfo',data).
     success(function(data, status, headers, config) {
@@ -122,6 +152,47 @@ app.controller('StationTodayCtrl',function($scope,$http,$location,userInfoServic
       console.log('error');
       $scope.error='操作失败！';
     });
+  //获取要处理的营业款时间
+  $http.post(apiIp+'/UncomfirmStationDate',data).
+    success(function(data, status, headers, config) {
+      console.log(data);
+      if (data.status==0) {
+        $scope.timeerror=data.info;
+      } else if (data.status==1) {
+        $scope.timelist=data.info;
+      };
+    }).
+    error(function(data, status, headers, config) {
+      console.log('error');
+      $scope.timeerror='操作失败！';
+    });
+
+  $scope.dealsubmit=function(){
+    var dealtime=document.getElementsByName('dealtime')[0].value;
+    $scope.dealtime=dealtime;
+    var dealdata= {
+          stationid:$scope.mlist.stationId,
+          roleid:userInfoService.mlist.roleid,
+          time:dealtime
+        };
+    $http.post(apiIp+'/GetXiaogeInfo',dealdata).
+    success(function(data, status, headers, config) {
+      console.log(data);
+      if (data.status==0) {
+        $scope.error=data.info;
+        $scope.billres=null;
+        $scope.xgsummary=null;
+      } else if (data.status==1) {
+        $scope.xgsummary=data.info.res;
+        $scope.billres=data.info.billres;
+      };
+    }).
+    error(function(data, status, headers, config) {
+      console.log('error');
+      $scope.error='操作失败！';
+    });
+  }
+
 });
 //网点小哥明细
 // app.controller('StationDetailCtrl',function($scope,$http,$location,userInfoService){
@@ -140,6 +211,7 @@ app.controller('StationDetailCtrl',function($scope,$http,$location,$routeParams,
           userId:$routeParams.userid,
           stationId:userInfoService.mlist.stationId,
           roleId:userInfoService.mlist.roleid,
+          time:$routeParams.time
       };
   console.log(data);
   $http.post(apiIp+'/GetOrderInfo',data).
@@ -373,10 +445,27 @@ app.controller('StationHistoryDetailCtrl',function($scope,$http,$location,$route
 });
 //财务index
 app.controller('FinanceIndexCtrl',function($scope,$http,$location,userInfoService){
-  $scope.nums=JSON.parse($location.search().nums);
+  // $scope.nums=JSON.parse($location.search().nums);
   $scope.mlist=userInfoService.mlist;
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
+  var data={
+          roleid : userInfoService.mlist.roleid,
+          areaid : userInfoService.mlist.cityId
+      };
+  $http.post(apiIp+'/GetNums',data).
+  success(function(data){
+    console.log(data);
+    if (data.status==0) {
+      $scope.error=data.info;
+    } else if (data.status==1) {
+      $scope.nums=data.info;
+    };
+  }).
+  error(function(data){
+    console.log('error');
+    $scope.error="操作失败！";
+  });
   console.log(userInfoService.mlist);
 });
 //财务todayrpt
@@ -385,8 +474,20 @@ app.controller('FinanceTodayrptCtrl',function($scope,$http,$location,userInfoSer
   $scope.mliststr=userInfoService.mliststr;
   $scope.uname=userInfoService.uname;
   console.log(userInfoService.mlist);
+  var time = Date.parse(new Date().toLocaleDateString()); 
+  var time = time-24*60*60*1000;
+  var date = new Date(time); 
+  var datetime = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+  if (document.getElementsByName('dealtime')[0].value=='' || document.getElementsByName('dealtime')[0].value==null) {
+    $scope.dealtime=datetime;
+  } else {
+    $scope.dealtime=document.getElementsByName('dealtime')[0].value;
+  }
+  // $scope.dealtime=document.getElementsByName('dealtime')[0].value;
+  console.log($scope.dealtime);
   var data={
-          'cityId':userInfoService.mlist.cityId
+          cityId:userInfoService.mlist.cityId,
+          time:$scope.dealtime
       };
   $http.post(apiIp+'/GetStationInfo',data).
     success(function(data){
@@ -403,6 +504,43 @@ app.controller('FinanceTodayrptCtrl',function($scope,$http,$location,userInfoSer
       console.log('error');
       $scope.error='操作失败！';
     });
+  //获取要处理的营业款时间
+  $http.post(apiIp+'/UncomfirmCityDate',data).
+    success(function(data, status, headers, config) {
+      console.log(data);
+      if (data.status==0) {
+        $scope.timeerror=data.info;
+      } else if (data.status==1) {
+        $scope.timelist=data.info;
+      };
+    }).
+    error(function(data, status, headers, config) {
+      console.log('error');
+      $scope.timeerror='操作失败！';
+    });
+
+    $scope.dealsubmit=function(){
+      var dealtime=document.getElementsByName('dealtime')[0].value;
+      $scope.dealtime=dealtime;
+      var dealdata= {
+            cityId:$scope.mlist.cityId,
+            time:dealtime
+          };
+      $http.post(apiIp+'/GetStationInfo',dealdata).
+      success(function(data, status, headers, config) {
+        console.log(data);
+        if (data.status==0) {
+          $scope.sinfo=null;
+          $scope.error=data.info;
+        } else if (data.status==1) {
+          $scope.sinfo=data.info;
+        };
+      }).
+      error(function(data, status, headers, config) {
+        console.log('error');
+        $scope.error='操作失败！';
+      });
+  }
 });
 //财务网点详情
 app.controller('FStationDetailCtrl',function($scope,$http,$location,$timeout,$routeParams,userInfoService){
@@ -410,13 +548,15 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$timeout,$ro
   $scope.mliststr=userInfoService.mliststr;
   $scope.stationid=$routeParams.stationid;
   $scope.uname=userInfoService.uname;
+  $scope.time=$routeParams.time;
   console.log(userInfoService.mlist);
   console.log($routeParams.stationid);
   console.log($routeParams);
   //获取小哥信息
   var data={
           stationid:$routeParams.stationid,
-          roleid:userInfoService.mlist.roleid
+          roleid:userInfoService.mlist.roleid,
+          time:$routeParams.time
       };
   $http.post(apiIp+'/GetXiaogeInfo',data).
     success(function(data){
@@ -436,6 +576,7 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$timeout,$ro
   //判断是否可以提交入库
   var data={
           stationId:$routeParams.stationid,
+          time:$routeParams.time
       };
   $http.post(apiIp+'/IsSubmitTable',data).
     success(function(data){
@@ -462,7 +603,8 @@ app.controller('FStationDetailCtrl',function($scope,$http,$location,$timeout,$ro
     var billDescribe=$("textarea[name='billDescribe']")[0].value;
     var data={
           stationId:$routeParams.stationid,
-          mark : billDescribe
+          mark : billDescribe,
+          time:$routeParams.time
       };
       console.log(data);
     $http.post(apiIp+'/ImportData',data).
@@ -503,6 +645,7 @@ app.controller('FXgDetailCtrl',function($scope,$http,$location,$routeParams,$tim
           userId:$routeParams.userid,
           stationId:$routeParams.stationid,
           roleId:userInfoService.mlist.roleid,
+          time:$routeParams.time
       };
   $http.post(apiIp+'/GetOrderInfo ',data).
     success(function(data){

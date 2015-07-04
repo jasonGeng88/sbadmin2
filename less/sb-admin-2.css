@@ -281,3 +281,8 @@ table.dataTable thead .sorting:after {
 .fa.category-type {
   font-size: 150px;
 }
+.historyStation {
+  width: 25%;
+  text-align: center;
+  float: left;
+}
